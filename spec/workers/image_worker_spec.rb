@@ -1,7 +1,12 @@
 describe ImageWorker do
-  it "calls download on the downloader to get images from s3" do
-    worker = ImageWorker.new
+  let(:worker) { ImageWorker.new }
+  it "downloads the images from the downloader" do
     expect(worker.downloader).to receive(:download)
+    worker.perform
+  end
+
+  it "finds any open events" do
+    expect(Event).to receive(:where).with(closed: false).and_return([])
     worker.perform
   end
 end
