@@ -1,5 +1,7 @@
 describe ImageWorker do
-  it "pulls the image names from the s3 bucket" do
-    fail
+  it "calls download on the downloader to get images from s3" do
+    worker = ImageWorker.new
+    expect(worker.downloader).to receive(:download)
+    worker.perform
   end
 end
