@@ -13,6 +13,9 @@ gem 'devise'
 gem 'cancan'
 gem 'bootstrap-sass'
 gem 'sidekiq'
+gem 'aws-sdk'
+gem 'grape'
+gem 'hashie_rails'
 
 group :development, :test do
   gem 'pry'
