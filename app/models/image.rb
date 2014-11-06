@@ -7,7 +7,7 @@ class Image < ActiveRecord::Base
     return unless Image.count > 1
     return unless hamming_distance_exceeds_threshold?
 
-    update_attribute(:event_id, Event.create.id)
+    Event.create
   end
 
   def hamming_distance_exceeds_threshold?
