@@ -8,6 +8,11 @@ RSpec.describe Event, :type => :model do
       timestamp_regex = /\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}-\d{9}/
       expect(event.bucket_name).to match /palantir_event_#{timestamp_regex}/
     end
+
+    it "creates an s3 bucket before saving" do
+      expect(event).to receive(:create_bucket)
+      event.save
+    end
   end
 
   context "#create_bucket" do

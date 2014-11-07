@@ -2,6 +2,7 @@ class Event < ActiveRecord::Base
   attr_accessor :image_service
 
   after_initialize :set_image_service, :set_bucket_name
+  before_save :create_bucket
 
   def set_image_service
     @image_service = ImageService.new
