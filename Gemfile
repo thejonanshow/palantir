@@ -25,4 +25,6 @@ group :development, :test do
   gem 'poltergeist'
   gem 'rspec-rails'
   gem 'guard-rspec'
+  gem 'vcr'
+  gem 'webmock'
 end
