@@ -5,6 +5,7 @@ RSpec.describe ImageService, :type => :model do
   let(:bucket_name) { 'test_palantir' }
 
   after(:all) do
+    return unless online?
     ImageService.new.delete_bucket('test_palantir')
   end
 

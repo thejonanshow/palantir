@@ -18,4 +18,7 @@ class ImageService
   def delete_bucket(bucket_name)
     client.buckets[bucket_name].delete! if bucket_exists?(bucket_name)
   end
+
+  def copy_image(image, bucket_name)
+  end
 end

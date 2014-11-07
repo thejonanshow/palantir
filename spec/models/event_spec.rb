@@ -1,7 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Event, :type => :model do
+  let(:image_service) { ImageService.new }
   let(:event) { Event.new }
+
+  before(:each) do
+    event.image_service = image_service
+  end
 
   context "#create" do
     it "creates an event bucket name" do
@@ -13,14 +18,17 @@ RSpec.describe Event, :type => :model do
       expect(event).to receive(:create_bucket)
       event.save
     end
+
+    it "copies all images to it's s3 bucket" do
+      image = Image.create(deleted: false, url: 'test_url')
+      expect(image_service).to receive(:copy_image).with(image, event.bucket_name)
+      event.save
+    end
   end
 
   context "#create_bucket" do
     it "tells the image service to create the bucket with the bucket name" do
-      image_service = ImageService.new
       expect(image_service).to receive(:create_bucket).with(event.bucket_name)
-
-      event.image_service = image_service
       event.create_bucket
     end
   end
