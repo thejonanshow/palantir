@@ -15,16 +15,7 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
-require 'vcr'
-VCR.configure do |config|
-  config.cassette_library_dir = 'spec/fixtures/vcr_cassettes'
-  config.allow_http_connections_when_no_cassette = true
-  config.hook_into :webmock
-end
-
-require 'helpers/image_service_helpers.rb'
 RSpec.configure do |config|
-  config.include ImageServiceHelpers
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.

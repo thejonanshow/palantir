@@ -14,6 +14,8 @@ gem 'cancan'
 gem 'bootstrap-sass'
 gem 'sidekiq'
 gem 'aws-sdk'
+gem 'unf'
+gem 'fog'
 gem 'grape'
 gem 'hashie_rails'
 
@@ -25,6 +27,4 @@ group :development, :test do
   gem 'poltergeist'
   gem 'rspec-rails'
   gem 'guard-rspec'
-  gem 'vcr'
-  gem 'webmock'
 end

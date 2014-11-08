@@ -12,10 +12,8 @@ RSpec.describe Image, :type => :model do
 
   context "#hamming_distance_exceeds_threshold?" do
     it "returns true if the hamming distance to the most recent image exceeds threshold" do
-      $debug = true
       image_one
       expect(image_two.hamming_distance_exceeds_threshold?).to be true
-      $debug = false
     end
   end
 
