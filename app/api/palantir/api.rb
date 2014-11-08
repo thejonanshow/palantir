@@ -21,7 +21,7 @@ module Palantir
         authenticate!
         Image.create!({
           url: params[:url],
-          phash: params[:hash]
+          phash: params[:phash]
         })
       end
     end
