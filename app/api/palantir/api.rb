@@ -6,7 +6,8 @@ module Palantir
 
     helpers do
       def valid_api_key?
-        !ApiKey.where(secret: 'secret').empty?
+        header_token = headers['Authorization'].split('=').last
+        ApiKey.where(token: header_token).present?
       end
 
       def authenticate!
