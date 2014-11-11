@@ -27,4 +27,6 @@ group :development, :test do
   gem 'poltergeist'
   gem 'rspec-rails'
   gem 'guard-rspec'
+  gem 'fabrication'
+  gem 'faker'
 end
