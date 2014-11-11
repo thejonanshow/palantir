@@ -11,9 +11,10 @@ RSpec.describe Event, :type => :model do
   context "#create" do
     it "creates an event directory name" do
       allow(event).to receive(:create_directory)
-      timestamp_regex = /\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}-\d{9}/
+      timestamp_regex = /\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}-\d{9}/
 
-      expect(event.directory_name).to match /palantir_event_#{timestamp_regex}/
+      event.set_directory_name
+      expect(event.directory_name).to match /palantir-event-#{timestamp_regex}/
     end
 
     it "creates an s3 directory before saving" do
@@ -25,8 +26,17 @@ RSpec.describe Event, :type => :model do
       allow(event).to receive(:create_directory)
       image = Image.create(deleted: false, url: 'test_url')
 
+      event.set_directory_name
       expect(image_service).to receive(:copy_image).with(image, event.directory_name)
       event.save
+    end
+  end
+
+  context "#copy_image" do
+    it "copies the given image to the event directory" do
+      image = Image.create
+      expect(image_service).to receive(:copy_image).with(image, event.directory_name)
+      event.copy_image(image)
     end
   end
 

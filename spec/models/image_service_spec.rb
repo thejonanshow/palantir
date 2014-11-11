@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe ImageService, :type => :model do
   let(:service) { ImageService.new }
-  let(:directory_name) { 'test_palantir' }
+  let(:directory_name) { 'test-palantir' }
   let(:image) { Image.create(directory_name: directory_name, name: 'eye_of_sauron.jpg') }
 
   before(:all) do

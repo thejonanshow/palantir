@@ -1,18 +1,24 @@
 class Image < ActiveRecord::Base
   HAMMING_DISTANCE_THRESHOLD = 10
 
-  after_create :create_event
+  after_create :create_event, :copy_to_open_event_directory
 
   def create_event
     return unless Image.count > 1
     return unless hamming_distance_exceeds_threshold?
 
-    Event.create
+    Event.create unless Event.where(closed: false).present?
+  end
+
+  def copy_to_open_event_directory
+    if event = Event.where(closed: false).first
+      event.copy_image(self)
+    end
   end
 
   def hamming_distance_exceeds_threshold?
     previous_image = Image.order(:created_at)[-2]
-    return unless previous_image.phash
+    return false unless previous_image && previous_image.phash
 
     if hamming_distance(previous_image) > HAMMING_DISTANCE_THRESHOLD
       true
@@ -22,7 +28,7 @@ class Image < ActiveRecord::Base
   end
 
   def hamming_distance(other_image)
-    return unless phash && other_image.phash && phash.length == other_image.phash.length
+    return 0 unless phash && other_image.phash && phash.length == other_image.phash.length
 
     count = 0
     phash.split('').each_with_index do |element, index|

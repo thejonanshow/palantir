@@ -36,12 +36,14 @@ class ImageService
   end
 
   def copy_image(image, target_directory)
-    target_image = client.directories.get(image.directory_name).files.head(image.name)
+    directory = client.directories.get(image.directory_name)
+    target_image = directory.files.head(image.name)
     target_image.copy(target_directory, image.name)
   end
 
-  def upload_image(image_path, directory_name)
+  def upload_image(image_path, directory_name, key = nil)
     directory = client.directories.get directory_name
-    directory.files.create(key: File.basename(image_path), body: File.open(image_path))
+    key ||= File.basename(image_path)
+    directory.files.create(key: key, body: File.open(image_path))
   end
 end
