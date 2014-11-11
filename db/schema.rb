@@ -23,19 +23,18 @@ ActiveRecord::Schema.define(version: 20141108015915) do
   end
 
   create_table "events", force: true do |t|
-    t.boolean  "closed"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.boolean  "closed",         default: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
     t.string   "directory_name"
   end
 
   create_table "images", force: true do |t|
     t.string   "url"
     t.string   "phash"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-    t.integer  "event_id"
-    t.boolean  "deleted"
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+    t.boolean  "deleted",        default: false
     t.string   "directory_name"
     t.string   "name"
   end
