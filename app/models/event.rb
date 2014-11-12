@@ -18,6 +18,7 @@ class Event < ActiveRecord::Base
 
   def copy_image(image)
     image_service.copy_image(image, directory_name)
+    close_event_if_maximum_images
   end
 
   def copy_images

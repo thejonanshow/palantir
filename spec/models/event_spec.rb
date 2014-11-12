@@ -45,6 +45,13 @@ RSpec.describe Event, :type => :model do
       expect(image_service).to receive(:copy_image).with(image, event.directory_name)
       event.copy_image(image)
     end
+
+    it "calls close_event_if_maximum_images" do
+      allow_any_instance_of(Image).to receive(:copy_to_open_event_directory)
+      store_image(image)
+      expect(event).to receive(:close_event_if_maximum_images)
+      event.copy_image(image)
+    end
   end
 
   context "#directory_size" do
