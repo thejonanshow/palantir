@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Event, :type => :model do
+  let(:image) { Fabricate(:image) }
   let(:image_service) { ImageService.new }
   let(:event) { Event.new }
 
@@ -29,7 +30,6 @@ RSpec.describe Event, :type => :model do
 
     it "copies all images to it's s3 directory" do
       allow(event).to receive(:create_directory)
-      image = Image.create(deleted: false, url: 'test_url')
 
       event.set_directory_name
       expect(image_service).to receive(:copy_image).with(image, event.directory_name)
@@ -39,7 +39,6 @@ RSpec.describe Event, :type => :model do
 
   context "#copy_image" do
     it "copies the given image to the event directory" do
-      image = Image.create
       expect(image_service).to receive(:copy_image).with(image, event.directory_name)
       event.copy_image(image)
     end
