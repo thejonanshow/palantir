@@ -1,6 +1,4 @@
 class Image < ActiveRecord::Base
-  HAMMING_DISTANCE_THRESHOLD = 10
-
   after_create :create_event, :copy_to_open_event_directory
 
   def create_event
@@ -20,7 +18,7 @@ class Image < ActiveRecord::Base
     previous_image = Image.order(:created_at)[-2]
     return false unless previous_image && previous_image.phash
 
-    if hamming_distance(previous_image) > HAMMING_DISTANCE_THRESHOLD
+    if hamming_distance(previous_image) > Palantir::HAMMING_DISTANCE_THRESHOLD
       true
     else
       false
