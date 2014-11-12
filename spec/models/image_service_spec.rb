@@ -76,4 +76,12 @@ RSpec.describe ImageService, :type => :model do
       expect(service.image_exists?(image)).to be true
     end
   end
+
+  context "#directory_size" do
+    it "returns the number of files in the directory" do
+      service.create_directory(directory_name)
+      service.upload_image('spec/fixtures/eye_of_sauron.jpg', directory_name)
+      expect(service.directory_size(directory_name)).to eql(1)
+    end
+  end
 end

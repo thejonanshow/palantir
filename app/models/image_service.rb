@@ -27,6 +27,10 @@ class ImageService
     end
   end
 
+  def directory_size(directory_name)
+    client.directories.get(directory_name).files.length
+  end
+
   def delete_directory(directory_name)
     directory = client.directories.get directory_name
     return unless directory
