@@ -29,21 +29,6 @@ RSpec.describe Palantir::API, :type => :request do
     post "/api/images", { :image => attributes }, headers
   end
 
-  def store_image(image)
-    create_image_directory
-
-    @image_service.upload_image(
-      'spec/fixtures/eye_of_sauron.jpg',
-      image.directory_name,
-      image.name
-    )
-  end
-
-  def create_image_directory
-    directory = Fabricate.build(:image).directory_name
-    @image_service.create_directory(directory) unless @image_service.directory_exists?(directory)
-  end
-
   context "POST /api/images" do
     let(:image) { Fabricate.build(:image) }
 

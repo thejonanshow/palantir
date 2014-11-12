@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Event, :type => :model do
   let(:image) { Fabricate(:image) }
   let(:image_service) { ImageService.new }
-  let(:event) { Fabricate(:event) }
+  let(:event) { Fabricate(:event, image_service: image_service) }
 
   before(:all) do
     Fog.mock!
@@ -44,6 +44,15 @@ RSpec.describe Event, :type => :model do
       allow_any_instance_of(Image).to receive(:copy_to_open_event_directory)
       expect(image_service).to receive(:copy_image).with(image, event.directory_name)
       event.copy_image(image)
+    end
+  end
+
+  context "#directory_size" do
+    it "returns the number of images in the event directory" do
+      allow_any_instance_of(Image).to receive(:copy_to_open_event_directory)
+      store_image(image)
+      event.copy_image(image)
+      expect(event.directory_size).to eql(1)
     end
   end
 

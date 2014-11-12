@@ -26,8 +26,11 @@ class Event < ActiveRecord::Base
     end
   end
 
+  def directory_size
+    image_service.directory_size(directory_name)
+  end
+
   def close_event_if_maximum_images
-    directory_size = image_service.directory_size(directory_name)
     update_attribute(:closed, true) if directory_size >= Palantir::MAXIMUM_EVENT_IMAGES
   end
 end
