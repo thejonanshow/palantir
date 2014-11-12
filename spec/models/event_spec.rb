@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Event, :type => :model do
   let(:image) { Fabricate(:image) }
   let(:image_service) { ImageService.new }
-  let(:event) { Event.new }
+  let(:event) { Fabricate(:event) }
 
   before(:all) do
     Fog.mock!
@@ -19,6 +19,7 @@ RSpec.describe Event, :type => :model do
       allow(event).to receive(:create_directory)
       timestamp_regex = /\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}-\d{9}/
 
+      event.directory_name = nil
       event.set_directory_name
       expect(event.directory_name).to match /palantir-event-#{timestamp_regex}/
     end
@@ -30,6 +31,7 @@ RSpec.describe Event, :type => :model do
 
     it "copies all images to it's s3 directory" do
       allow(event).to receive(:create_directory)
+      allow_any_instance_of(Image).to receive(:copy_to_open_event_directory)
 
       event.set_directory_name
       expect(image_service).to receive(:copy_image).with(image, event.directory_name)
@@ -39,6 +41,7 @@ RSpec.describe Event, :type => :model do
 
   context "#copy_image" do
     it "copies the given image to the event directory" do
+      allow_any_instance_of(Image).to receive(:copy_to_open_event_directory)
       expect(image_service).to receive(:copy_image).with(image, event.directory_name)
       event.copy_image(image)
     end
