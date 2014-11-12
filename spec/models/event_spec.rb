@@ -4,7 +4,12 @@ RSpec.describe Event, :type => :model do
   let(:image_service) { ImageService.new }
   let(:event) { Event.new }
 
+  before(:all) do
+    Fog.mock!
+  end
+
   before(:each) do
+    Fog::Mock.reset
     event.image_service = image_service
   end
 
@@ -44,6 +49,15 @@ RSpec.describe Event, :type => :model do
     it "tells the image service to create the directory with the directory name" do
       expect(image_service).to receive(:create_directory).with(event.directory_name)
       event.create_directory
+    end
+  end
+
+  context "#close_event_if_maximum_images" do
+    it "closes the event if the event directory has 100 or more images" do
+      event.set_directory_name
+      event.create_directory
+      allow(event.image_service).to receive(:directory_size).and_return(Palantir::MAXIMUM_EVENT_IMAGES)
+      expect { event.close_event_if_maximum_images }.to change { event.closed }.from(false).to(true)
     end
   end
 end
