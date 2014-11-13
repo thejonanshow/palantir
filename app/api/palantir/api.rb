@@ -1,7 +1,6 @@
 module Palantir
   class API < Grape::API
     version 'v1', using: :header, vendor: 'palantir'
-    format :json
     prefix :api
 
     helpers do
@@ -18,10 +17,14 @@ module Palantir
 
     resource :images do
       desc "Create an image."
-
       post do
         authenticate!
         Image.create!(params['image'])
+      end
+
+      desc "Get the latest image URL"
+      get :latest do
+        Image.order(:created_at).last.url
       end
     end
   end

@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Palantir::API, :type => :request do
+  let(:image) { Fabricate.build(:image) }
+
   before(:all) do
     Fog.mock!
 
@@ -29,9 +31,21 @@ RSpec.describe Palantir::API, :type => :request do
     post "/api/images", { :image => attributes }, headers
   end
 
-  context "POST /api/images" do
-    let(:image) { Fabricate.build(:image) }
+  context "GET /api/images/latest" do
+    it "returns 200" do
+      post_request(image)
+      get '/api/images/latest', {}, @headers
+      expect(response).to have_http_status(:ok)
+    end
 
+    it "returns the latest image url" do
+      post_request(image)
+      get '/api/images/latest', {}, @headers
+      expect(response.body).to eql(image.url)
+    end
+  end
+
+  context "POST /api/images" do
     it "returns 200" do
       post_request(image)
       expect(response).to have_http_status(:created)
