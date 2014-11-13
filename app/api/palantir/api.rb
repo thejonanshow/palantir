@@ -6,7 +6,8 @@ module Palantir
 
     helpers do
       def valid_api_key?
-        header_token = headers['Authorization'].split('=').last
+        return false unless header_token = headers['Authorization']
+        header_token = header_token.split('=').last
         ApiKey.where(token: header_token).present?
       end
 
