@@ -104,7 +104,18 @@ RSpec.describe Palantir::API, :type => :request do
       expect(@image_service.image_exists?(image)).to be true
     end
 
-    # it "stops copying images to the event when it hits the maximum number of images for an event"
-    # it "closes the event when the event has copied the maximum number of images"
+    it "closes the event when the event has copied the maximum number of images" do
+      event = Event.create(closed: false)
+
+      99.times do |n|
+        event.image_service.upload_image(
+          'spec/fixtures/eye_of_sauron.jpg',
+          event.directory_name,
+          "image#{n}.jpg"
+        )
+      end
+
+      expect { post_request(image) }.to change { event.reload.closed }.from(false).to(true)
+    end
   end
 end

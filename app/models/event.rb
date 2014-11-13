@@ -2,7 +2,7 @@ class Event < ActiveRecord::Base
   attr_accessor :image_service
 
   after_initialize :set_image_service
-  before_save :set_directory_name, :create_directory, :copy_images
+  before_save :set_directory_name, :create_directory, :copy_images, unless: Proc.new { |e| e.closed }
 
   def set_image_service
     @image_service = ImageService.new
