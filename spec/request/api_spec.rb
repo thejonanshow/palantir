@@ -1,9 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Palantir::API, :type => :request do
+  include Warden::Test::Helpers
+
   let(:image) { Fabricate.build(:image) }
 
   before(:all) do
+    Warden.test_mode!
     Fog.mock!
 
     token = 'secret'
@@ -21,14 +24,14 @@ RSpec.describe Palantir::API, :type => :request do
     Fog::Mock.reset
   end
 
-  def post_request(image, headers = @headers)
+  def post_request(image, headers = @headers, options = {})
     store_image(image)
 
     attributes = image.attributes.select do |k, _|
       !['id', 'created_at', 'updated_at'].include? k
     end
 
-    post "/api/images", { :image => attributes }, headers
+    post "/api/images", { :image => attributes }.merge(options), headers
   end
 
   context "GET /api/images/latest" do
@@ -46,7 +49,7 @@ RSpec.describe Palantir::API, :type => :request do
   end
 
   context "POST /api/images" do
-    it "returns 200" do
+    it "returns 201" do
       post_request(image)
       expect(response).to have_http_status(:created)
     end
@@ -55,6 +58,23 @@ RSpec.describe Palantir::API, :type => :request do
       fake_auth_header = { 'Authorization' => "Token token=FAKE" }
       post_request(image, fake_auth_header)
       expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 201 with bad header if user is logged in" do
+      user = Fabricate(:user)
+      login_as(user)
+
+      fake_auth_header = { 'Authorization' => "Token token=FAKE" }
+      post_request(image, fake_auth_header)
+      expect(response).to have_http_status(:created)
+    end
+
+    it "returns 201 with bad header if user with auth token exists" do
+      user = Fabricate(:user)
+
+      fake_auth_header = { 'Authorization' => "Token token=FAKE" }
+      post_request(image, fake_auth_header, { :access_token => user.authentication_token })
+      expect(response).to have_http_status(:created)
     end
 
     it "creates an image" do
