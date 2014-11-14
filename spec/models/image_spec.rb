@@ -47,4 +47,9 @@ RSpec.describe Image, :type => :model do
       image_two
     end.to change { Event.count }.from(0).to(1)
   end
+
+  it "marks the oldest image as deleted if we've reached maximum images" do
+    100.times { Fabricate(:image) }
+    expect { Fabricate(:image) }.to change { Image.where(deleted: true).length }.from(0).to(1)
+  end
 end

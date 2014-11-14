@@ -1,5 +1,5 @@
 class Image < ActiveRecord::Base
-  after_create :create_event, :copy_to_open_event_directory
+  after_create :create_event, :copy_to_open_event_directory, :delete_oldest
 
   def create_event
     return unless Image.count > 1
@@ -34,5 +34,11 @@ class Image < ActiveRecord::Base
     end
 
     count
+  end
+
+  def delete_oldest
+    if Image.count > Palantir::MAXIMUM_IMAGES
+      Image.order(:created_at).first.update_attributes(deleted: true)
+    end
   end
 end
