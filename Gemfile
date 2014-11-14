@@ -18,6 +18,7 @@ gem 'unf'
 gem 'fog'
 gem 'grape'
 gem 'hashie_rails'
+gem 'phashion'
 
 group :development, :test do
   gem 'pry'

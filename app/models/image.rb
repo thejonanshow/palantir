@@ -22,14 +22,7 @@ class Image < ActiveRecord::Base
   end
 
   def hamming_distance(other_image)
-    return 0 unless phash && other_image.phash && phash.length == other_image.phash.length
-
-    count = 0
-    phash.split('').each_with_index do |element, index|
-      count += 1 unless element == other_image.phash[index]
-    end
-
-    count
+    Phashion.hamming_distance(phash.to_i, other_image.phash.to_i)
   end
 
   def delete_oldest

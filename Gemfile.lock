@@ -161,6 +161,7 @@ GEM
       mini_portile (~> 0.6.0)
     orm_adapter (0.5.0)
     pg (0.17.1)
+    phashion (1.1.1)
     poltergeist (1.5.1)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
@@ -306,6 +307,7 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jquery-rails (~> 4.0.0.beta2)
   pg
+  phashion
   poltergeist
   pry
   rails (= 4.2.0.beta2)

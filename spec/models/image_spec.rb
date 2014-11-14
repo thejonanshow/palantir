@@ -28,7 +28,7 @@ RSpec.describe Image, :type => :model do
   context "#hamming_distance" do
     it "returns the hamming distance to the given image" do
       allow_any_instance_of(Event).to receive(:copy_image)
-      expect(image_two.hamming_distance(image_one)).to be 15
+      expect(image_two.hamming_distance(image_one)).to be 22
     end
   end
 
