@@ -8,7 +8,7 @@ module Palantir
         env['warden']
       end
 
-      def authenticated_with_warden?
+      def authenticated?
         return true if warden.authenticated?
         params[:access_token] && @user = User.find_by_authentication_token(params[:access_token])
       end
@@ -17,14 +17,8 @@ module Palantir
         warden.user || @user
       end
 
-      def valid_api_key?
-        return false unless header_token = headers['Authorization']
-        header_token = header_token.split('=').last
-        ApiKey.where(token: header_token).present?
-      end
-
       def authenticate!
-        error!('401 Unauthorized', 401) unless valid_api_key? || authenticated_with_warden?
+        error!('401 Unauthorized', 401) unless authenticated?
       end
     end
 

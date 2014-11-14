@@ -7,24 +7,21 @@ RSpec.describe Palantir::API, :type => :request do
 
   before(:all) do
     Warden.test_mode!
+
     Fog.mock!
 
-    token = 'secret'
-    ApiKey.create(token: token)
-
     @image_service = ImageService.new
-    create_image_directory
+    @user = Fabricate(:user)
 
-    @headers = {
-      'Authorization' => "Token token=#{token}"
-    }
+    create_image_directory
   end
 
   before(:each) do
+    login_as(@user)
     Fog::Mock.reset
   end
 
-  def post_request(image, headers = @headers, options = {})
+  def post_request(image, options = {}, headers = {})
     store_image(image)
 
     attributes = image.attributes.select do |k, _|
@@ -37,13 +34,13 @@ RSpec.describe Palantir::API, :type => :request do
   context "GET /api/images/latest" do
     it "returns 200" do
       post_request(image)
-      get '/api/images/latest', {}, @headers
+      get '/api/images/latest'
       expect(response).to have_http_status(:ok)
     end
 
     it "returns the latest image url" do
       post_request(image)
-      get '/api/images/latest', {}, @headers
+      get '/api/images/latest'
       expect(response.body).to eql(image.url)
     end
   end
@@ -54,26 +51,20 @@ RSpec.describe Palantir::API, :type => :request do
       expect(response).to have_http_status(:created)
     end
 
-    it "returns 401 if authorization fails" do
-      fake_auth_header = { 'Authorization' => "Token token=FAKE" }
-      post_request(image, fake_auth_header)
+    it "returns 401 if user is logged out" do
+      logout
+      post_request(image)
       expect(response).to have_http_status(:unauthorized)
     end
 
-    it "returns 201 with bad header if user is logged in" do
-      user = Fabricate(:user)
-      login_as(user)
-
-      fake_auth_header = { 'Authorization' => "Token token=FAKE" }
-      post_request(image, fake_auth_header)
+    it "returns 201 if user is logged in" do
+      post_request(image)
       expect(response).to have_http_status(:created)
     end
 
-    it "returns 201 with bad header if user with auth token exists" do
-      user = Fabricate(:user)
-
-      fake_auth_header = { 'Authorization' => "Token token=FAKE" }
-      post_request(image, fake_auth_header, { :access_token => user.authentication_token })
+    it "returns 201 if params include existing authentication token" do
+      logout
+      post_request(image, { :access_token => @user.authentication_token })
       expect(response).to have_http_status(:created)
     end
 
