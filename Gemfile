@@ -20,6 +20,7 @@ gem 'grape'
 gem 'hashie_rails'
 gem 'phashion'
 gem 'twitter', '~> 5.13.0'
+gem 'foreman'
 
 group :development, :test do
   gem 'pry'

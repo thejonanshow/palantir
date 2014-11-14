@@ -30,3 +30,4 @@ config/secrets.yml
 bower.json
 
 spec/fixtures
+.env
