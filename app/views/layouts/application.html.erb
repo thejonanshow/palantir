@@ -5,12 +5,16 @@
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tags %>
+  <%= yield :header %>
 </head>
 <body>
 
-<%= link_to('Sign out', destroy_user_session_path, method: :delete) if current_user %>
-
-<%= yield %>
+<div class='container'>
+  <div id='content'>
+    <%= link_to('Sign out', destroy_user_session_path, method: :delete) if current_user %>
+    <%= yield %>
+  </div>
+</div>
 
 </body>
 </html>

@@ -1,3 +1,7 @@
+<%= content_for(:header) do %>
+  <%= javascript_include_tag 'welcome' %>
+<% end %>
+
 <h1>Events</h1>
 <% @events.each do |event| %>
   <%= p event %>
