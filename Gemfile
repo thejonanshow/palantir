@@ -19,6 +19,7 @@ gem 'fog'
 gem 'grape'
 gem 'hashie_rails'
 gem 'phashion'
+gem 'twitter', '~> 5.13.0'
 
 group :development, :test do
   gem 'pry'

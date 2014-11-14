@@ -1,11 +1,20 @@
 class Event < ActiveRecord::Base
-  attr_accessor :image_service
+  attr_accessor :image_service, :notification_service, :notifications_enabled
 
-  after_initialize :set_image_service
+  after_initialize :set_image_service, :set_notification_service
+  after_create :send_notification, if: Proc.new { |e| e.notifications_enabled? }
   before_save :set_directory_name, :create_directory, :copy_images, unless: Proc.new { |e| e.closed }
 
   def set_image_service
-    @image_service = ImageService.new
+    self.image_service = ImageService.new
+  end
+
+  def set_notification_service
+    self.notification_service ||= NotificationService.new
+  end
+
+  def notifications_enabled?
+    self.notifications_enabled || Rails.env.production?
   end
 
   def set_directory_name
@@ -14,6 +23,13 @@ class Event < ActiveRecord::Base
 
   def create_directory
     image_service.create_directory(directory_name)
+  end
+
+  def send_notification
+    return unless notification_service
+    url = Rails.application.routes.url_helpers.events_show_url(self)
+    message = "#{Palantir::TWITTER_ALERT}: They draw near: #{url}"
+    notification_service.notify message
   end
 
   def copy_image(image)

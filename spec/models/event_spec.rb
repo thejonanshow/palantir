@@ -3,7 +3,16 @@ require 'rails_helper'
 RSpec.describe Event, :type => :model do
   let(:image) { Fabricate(:image) }
   let(:image_service) { ImageService.new }
-  let(:event) { Fabricate(:event, image_service: image_service) }
+  let(:notification_service_client) { double('notification_service_client') }
+  let(:notification_service) { double('notification_service', client: notification_service_client) }
+
+  let(:event) {
+    Fabricate(
+      :event,
+      image_service: image_service,
+      notification_service: notification_service
+    )
+  }
 
   before(:all) do
     Fog.mock!
@@ -17,6 +26,7 @@ RSpec.describe Event, :type => :model do
   context "#create" do
     it "creates an event directory name" do
       allow(event).to receive(:create_directory)
+
       timestamp_regex = /\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}-\d{9}/
 
       event.directory_name = nil
@@ -37,11 +47,19 @@ RSpec.describe Event, :type => :model do
       expect(image_service).to receive(:copy_image).with(image, event.directory_name)
       event.save
     end
+
+    it "sends a notification" do
+      url = Rails.application.routes.url_helpers.events_show_url(event)
+      message = "#{Palantir::TWITTER_ALERT}: They draw near: #{url}"
+      expect(event.notification_service).to receive(:notify).with(message)
+      event.send_notification
+    end
   end
 
   context "#copy_image" do
     it "copies the given image to the event directory" do
       allow_any_instance_of(Image).to receive(:copy_to_open_event_directory)
+
       expect(image_service).to receive(:copy_image).with(image, event.directory_name)
       event.copy_image(image)
     end
