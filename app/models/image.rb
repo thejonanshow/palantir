@@ -18,11 +18,7 @@ class Image < ActiveRecord::Base
     previous_image = Image.order(:created_at)[-2]
     return false unless previous_image && previous_image.phash
 
-    if hamming_distance(previous_image) > Palantir::HAMMING_DISTANCE_THRESHOLD
-      true
-    else
-      false
-    end
+    hamming_distance(previous_image) > Palantir::HAMMING_DISTANCE_THRESHOLD
   end
 
   def hamming_distance(other_image)
@@ -38,7 +34,13 @@ class Image < ActiveRecord::Base
 
   def delete_oldest
     if Image.count > Palantir::MAXIMUM_IMAGES
-      Image.order(:created_at).first.update_attributes(deleted: true)
+      oldest = Image.order(:created_at).first
+      oldest.update_attributes(deleted: true)
+      oldest.delete_remote
     end
+  end
+
+  def delete_remote
+    ImageService.new.delete_image(self)
   end
 end

@@ -31,6 +31,12 @@ class ImageService
     client.directories.get(directory_name).files.length
   end
 
+  def delete_image(image)
+    directory = client.directories.get(image.directory_name)
+    file = directory.files.head(image.name) if directory
+    file.destroy if file
+  end
+
   def delete_directory(directory_name)
     directory = client.directories.get directory_name
     return unless directory

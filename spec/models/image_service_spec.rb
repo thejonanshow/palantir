@@ -2,11 +2,15 @@ require 'rails_helper'
 
 RSpec.describe ImageService, :type => :model do
   let(:service) { ImageService.new }
-  let(:directory_name) { 'test-palantir' }
-  let(:image) { Image.create(directory_name: directory_name, name: 'eye_of_sauron.jpg') }
+  let(:directory_name) { Fabricate.build(:image).directory_name }
+  let(:image) { Fabricate(:image) }
 
   before(:all) do
     Fog.mock!
+  end
+
+  after(:each) do
+    Fog::Mock.reset
   end
 
   context ".client" do
@@ -19,6 +23,24 @@ RSpec.describe ImageService, :type => :model do
     it "creates the directory with the client" do
       service.create_directory(directory_name)
       expect(service.directory_exists?(directory_name)).to be true
+    end
+  end
+
+  context "#delete_image" do
+    it "deletes the image with the client" do
+      store_image(image)
+      expect {
+        service.delete_image(image)
+      }.to change { service.image_exists?(image) }.from(true).to(false)
+    end
+
+    it "does not raise an error if the image directory does not exist" do
+      expect { service.delete_image(image) }.to_not raise_error
+    end
+
+    it "does not raise an error if the image does not exist" do
+      service.create_directory(directory_name)
+      expect { service.delete_image(image) }.to_not raise_error
     end
   end
 
@@ -64,8 +86,7 @@ RSpec.describe ImageService, :type => :model do
 
   context "#copy_image" do
     it "copies the given image to the target directory" do
-      service.create_directory(directory_name)
-      service.upload_image('spec/fixtures/eye_of_sauron.jpg', directory_name)
+      store_image(image)
 
       target_directory = "#{directory_name}2"
       service.create_directory(target_directory)
@@ -79,9 +100,8 @@ RSpec.describe ImageService, :type => :model do
 
   context "#directory_size" do
     it "returns the number of files in the directory" do
-      service.create_directory(directory_name)
-      service.upload_image('spec/fixtures/eye_of_sauron.jpg', directory_name)
-      service.upload_image('spec/fixtures/eye_of_sauron.jpg', directory_name, 'image2.jpg')
+      store_image(image)
+      store_image(Fabricate(:image, name: 'image2.jpg'))
 
       expect(service.directory_size(directory_name)).to eql(2)
     end

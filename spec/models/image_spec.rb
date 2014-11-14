@@ -15,6 +15,7 @@ RSpec.describe Image, :type => :model do
       directory_name: 'palantir-test-directory-name'
     )
   }
+  let(:service) { ImageService.new }
 
   before(:all) do
     Fog.mock!
@@ -48,8 +49,26 @@ RSpec.describe Image, :type => :model do
     end.to change { Event.count }.from(0).to(1)
   end
 
-  it "marks the oldest image as deleted if we've reached maximum images" do
-    100.times { Fabricate(:image) }
-    expect { Fabricate(:image) }.to change { Image.where(deleted: true).length }.from(0).to(1)
+  context "#delete_remote" do
+    it "deletes the remote image" do
+      image = Fabricate(:image)
+      store_image(image)
+
+      expect { image.delete_remote }.to change { service.image_exists?(image) }.from(true).to(false)
+    end
+  end
+
+  context "#delete_oldest" do
+    it "marks the oldest image as deleted if we've reached maximum images" do
+      100.times { Fabricate(:image) }
+      expect { Fabricate(:image) }.to change { Image.where(deleted: true).length }.from(0).to(1)
+    end
+
+    it "deletes the image remotely when we reach the maximum" do
+      oldest = Fabricate(:image)
+      store_image(oldest)
+      allow(Image).to receive(:count).and_return(101)
+      expect { Fabricate(:image) }.to change { service.image_exists?(oldest) }.from(true).to(false)
+    end
   end
 end
