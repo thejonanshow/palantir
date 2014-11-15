@@ -15,7 +15,6 @@ gem 'devise'
 gem 'cancan'
 gem 'bootstrap-sass'
 gem 'sidekiq'
-gem 'aws-sdk'
 gem 'unf'
 gem 'fog'
 gem 'grape'
@@ -36,4 +35,5 @@ group :development, :test do
   gem 'guard-rspec'
   gem 'fabrication'
   gem 'faker'
+  gem 'launchy'
 end

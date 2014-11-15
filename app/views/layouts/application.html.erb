@@ -9,10 +9,13 @@
 </head>
 <body>
 
-<div class='container'>
-  <div id='content'>
-    <%= link_to('Sign out', destroy_user_session_path, method: :delete) if current_user %>
-    <%= yield %>
+<div class='jumbotron'>
+  <h1>Palantir</h1>
+  <div class='container'>
+    <div id='content'>
+      <%= link_to('Sign out', destroy_user_session_path, method: :delete) if current_user %>
+      <%= yield %>
+    </div>
   </div>
 </div>
 
