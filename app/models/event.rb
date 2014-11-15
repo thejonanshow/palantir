@@ -1,11 +1,21 @@
 class Event < ActiveRecord::Base
   belongs_to :image
 
-  attr_accessor :image_service, :notification_service, :notifications_enabled
+  attr_accessor :image_service, :notification_service, :notifications_enabled,
+    :disable_callbacks
 
   after_initialize :set_image_service, :set_notification_service
-  after_create :send_notification, if: Proc.new { |e| e.notifications_enabled? }
-  before_save :set_directory_name, :create_directory, :copy_images, unless: Proc.new { |e| e.closed }
+  after_create :send_notification,
+    unless: Proc.new { |event| event.disable_callbacks || event.notifications_disabled? }
+  before_save :set_directory_name, :create_directory, :copy_images,
+    unless: Proc.new { |event| event.disable_callbacks || event.closed }
+
+  def ignore_callbacks
+    disable_callbacks = true
+    yield(self)
+  ensure
+    disable_callbacks = false
+  end
 
   def set_image_service
     self.image_service = ImageService.new
@@ -19,6 +29,10 @@ class Event < ActiveRecord::Base
     self.notifications_enabled || Rails.env.production?
   end
 
+  def notifications_disabled?
+    !notifications_enabled?
+  end
+
   def set_directory_name
     self.directory_name ||= "palantir-event-#{Time.now.strftime '%Y-%m-%d-%H-%M-%S-%9L'}"
   end
@@ -29,7 +43,7 @@ class Event < ActiveRecord::Base
 
   def send_notification
     return unless notification_service
-    url = Rails.application.routes.url_helpers.events_show_url(self)
+    url = Rails.application.routes.url_helpers.event_url(self)
     message = "#{Palantir::TWITTER_ALERT}: They draw near: #{url}"
     notification_service.notify message
   end
@@ -47,6 +61,10 @@ class Event < ActiveRecord::Base
 
   def directory_size
     image_service.directory_size(directory_name)
+  end
+
+  def image_urls
+    image_service.image_urls(directory_name)
   end
 
   def close_event_if_maximum_images

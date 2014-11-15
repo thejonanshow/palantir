@@ -49,7 +49,7 @@ RSpec.describe Event, :type => :model do
     end
 
     it "sends a notification" do
-      url = Rails.application.routes.url_helpers.events_show_url(event)
+      url = Rails.application.routes.url_helpers.event_url(event)
       message = "#{Palantir::TWITTER_ALERT}: They draw near: #{url}"
       expect(event.notification_service).to receive(:notify).with(message)
       event.send_notification
@@ -94,6 +94,17 @@ RSpec.describe Event, :type => :model do
       event.create_directory
       allow(event.image_service).to receive(:directory_size).and_return(Palantir::MAXIMUM_EVENT_IMAGES)
       expect { event.close_event_if_maximum_images }.to change { event.closed }.from(false).to(true)
+    end
+  end
+
+  context "#image_urls" do
+    it "returns a list of urls for all stored images under event" do
+      allow_any_instance_of(Image).to receive(:copy_to_open_event_directory)
+
+      store_image(image)
+      event.copy_image(image)
+
+      expect(event.image_urls.first).to match(/#{File.basename(image.url)}/)
     end
   end
 end

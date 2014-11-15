@@ -1,2 +1,13 @@
-<h1>Events#show</h1>
-<p>Find me in app/views/events/show.html.erb</p>
+<h1>Event</h1>
+<h2><%= l(local_time(@event.created_at), format: :month_day_year_time) %></h2>
+
+<div class='col-md-12'>
+  <h2>Images</h2>
+  <% @images.each do |image| %>
+    <div class='well event col-xs-2'>
+      <%= link_to image do %>
+        <%= image_tag(image, class: 'thumbnail') if image %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

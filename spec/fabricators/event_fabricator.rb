@@ -1,4 +1,4 @@
 Fabricator(:event) do |event|
   closed { false }
-  directory_name { 'palantir-test-directory-name' }
+  directory_name { 'palantir-event-test-directory-name' }
 end

@@ -2,14 +2,24 @@
   <%= javascript_include_tag 'welcome' %>
 <% end %>
 
-<h1>Events</h1>
-<% @events.each do |event| %>
-  <%= p event %>
-<% end %>
+<div class='row'>
+  <div>
+    <div id="image" class="well"></div>
+  </div>
+</div>
 
-<h1>Images</h1>
-<% @images.each do |image| %>
-  <%= p image %>
-<% end %>
+<div class='row'>
+  <div id='events' class='col-md-4'>
+    <h2>Events</h2>
+    <% @events.each do |event| %>
+      <div class='well event'>
+        <%= link_to(event_url(event)) do %>
+          <h4><%= "#{l(local_time(event.created_at), format: :month_day_year_time)}" %></h4>
+          <%= image_tag(event.image.url, class: 'thumbnail') if event.image %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
 
-<div id="image"></div>
+  <%= render 'shared/images' %>
+</div>

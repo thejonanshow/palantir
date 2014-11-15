@@ -1,5 +1,8 @@
 class Image < ActiveRecord::Base
-  after_create :create_event, :copy_to_open_event_directory, :delete_oldest
+  attr_accessor :disable_callbacks
+
+  after_create :create_event, :copy_to_open_event_directory, :delete_oldest,
+    :unless => Proc.new { |image| image.disable_callbacks }
 
   def create_event
     return unless Image.count > 1

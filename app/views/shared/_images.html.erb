@@ -1,0 +1,11 @@
+<div class='col-md-8'>
+  <h2>Images</h2>
+  <% @images.each do |image| %>
+    <div class='well event col-xs-2'>
+    <%= link_to(image_url(image)) do %>
+      <h4><%= "#{l(local_time(image.created_at), format: :month_day_year_time)}" %></h4>
+    <%= image_tag(image.url, class: 'thumbnail') if image %>
+  <% end %>
+  </div>
+<% end %>
+</div>
