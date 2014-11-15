@@ -24,6 +24,7 @@ gem 'phashion'
 gem 'twitter', '~> 5.13.0'
 gem 'foreman'
 gem 'rails_12factor', group: :production
+gem 'unicorn'
 
 group :development, :test do
   gem 'pry'
