@@ -48,6 +48,14 @@ RSpec.describe Image, :type => :model do
       image_two
     end.to change { Event.count }.from(0).to(1)
   end
+  
+  it "assigns itself to the created event" do
+    image_one
+
+    allow_any_instance_of(Event).to receive(:copy_image)
+    image_two
+    expect(Event.first.image).to eql(image_two)
+  end
 
   context "#delete_remote" do
     it "deletes the remote image" do

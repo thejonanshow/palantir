@@ -23,7 +23,7 @@ gem 'hashie_rails'
 gem 'phashion'
 gem 'twitter', '~> 5.13.0'
 gem 'foreman'
-gem 'rails_12factor'
+gem 'rails_12factor', group: :production
 
 group :development, :test do
   gem 'pry'

@@ -1,4 +1,6 @@
 class Event < ActiveRecord::Base
+  belongs_to :image
+
   attr_accessor :image_service, :notification_service, :notifications_enabled
 
   after_initialize :set_image_service, :set_notification_service
