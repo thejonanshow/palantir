@@ -4,4 +4,5 @@ Fabricator(:image) do
   deleted { false }
   name { |attrs| attrs[:url].split('/').last }
   directory_name { 'palantir-test-directory-name' }
+  hamming_distance { rand(Palantir::HAMMING_DISTANCE_THRESHOLD) }
 end

@@ -36,5 +36,19 @@ module Palantir
         image.url if image
       end
     end
+
+    resource :hamming_distances do
+      desc "Get all hamming distances"
+      get do
+        authenticate!
+        Image.order(:created_at).map(&:hamming_distance).compact
+      end
+
+      get :latest do
+        authenticate!
+        image = Image.order(:created_at).last
+        (image.hamming_distance || 0) if image
+      end
+    end
   end
 end

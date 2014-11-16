@@ -32,6 +32,33 @@ RSpec.describe Palantir::API, :type => :request do
     post "/api/images", { :image => attributes }.merge(options), headers
   end
 
+  context "GET /api/hamming_distances", focus: true do
+    it "returns 200" do
+      get '/api/hamming_distances'
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "returns all the hamming distances" do
+      post_request(image)
+      post_request(image)
+      get '/api/hamming_distances'
+      expect(response.body).to eql([image.hamming_distance,0].to_s)
+    end
+  end
+
+  context "GET /api/hamming_distances/latest", focus: true do
+    it "returns 200" do
+      post_request(image)
+      allow_any_instance_of(Image).to receive(:set_hamming_distance).and_return(image.hamming_distance)
+      post_request(image)
+      get '/api/hamming_distances/latest'
+      expect(response.body).to eql(image.hamming_distance.to_s)
+    end
+
+    it "returns the latest hamming distance" do
+    end
+  end
+
   context "GET /api/images/latest" do
     it "returns 200" do
       post_request(image)
