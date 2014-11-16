@@ -8,7 +8,7 @@ class ImageService
   end
 
   def create_directory(directory_name)
-    client.directories.create(key: directory_name)
+    client.directories.create(key: directory_name, public: true)
   end
 
   def image_exists?(image)
@@ -46,6 +46,12 @@ class ImageService
     end
   end
 
+  def remote_image_url_for(event)
+    directory = client.directories.get(event.directory_name)
+    image = directory.files.head(event.image.name) if directory
+    image.public_url if image
+  end
+
   def delete_directory(directory_name)
     directory = client.directories.get directory_name
     return unless directory
@@ -58,6 +64,9 @@ class ImageService
     directory = client.directories.get(image.directory_name)
     target_image = directory.files.head(image.name)
     target_image.copy(target_directory, image.name, public: true)
+    new_target = client.directories.get(target_directory).files.head(image.name)
+    new_target.acl = 'public-read'
+    new_target.save
   end
 
   def upload_image(image_path, directory_name, key = nil)

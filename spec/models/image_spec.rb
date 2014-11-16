@@ -28,7 +28,7 @@ RSpec.describe Image, :type => :model do
   context "#hamming_distance" do
     it "returns the hamming distance to the given image" do
       allow_any_instance_of(Event).to receive(:copy_image)
-      expect(image_two.hamming_distance(image_one)).to be 22
+      expect(image_two.set_hamming_distance(image_one)).to be 22
     end
   end
 
@@ -68,14 +68,20 @@ RSpec.describe Image, :type => :model do
 
   context "#delete_oldest" do
     it "marks the oldest image as deleted if we've reached maximum images" do
-      100.times { Fabricate(:image) }
+      10.times { Fabricate(:image) }
       expect { Fabricate(:image) }.to change { Image.where(deleted: true).length }.from(0).to(1)
+    end
+
+    it "marks two oldest images as deleted after maximum" do
+      10.times { Fabricate(:image) }
+      expect { Fabricate(:image) }.to change { Image.where(deleted: true).length }.from(0).to(1)
+      expect { Fabricate(:image) }.to change { Image.where(deleted: true).length }.from(1).to(2)
     end
 
     it "deletes the image remotely when we reach the maximum" do
       oldest = Fabricate(:image)
+      9.times { Fabricate(:image) }
       store_image(oldest)
-      allow(Image).to receive(:count).and_return(101)
       expect { Fabricate(:image) }.to change { service.image_exists?(oldest) }.from(true).to(false)
     end
   end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141115002031) do
+ActiveRecord::Schema.define(version: 20141116014625) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,11 +27,12 @@ ActiveRecord::Schema.define(version: 20141115002031) do
   create_table "images", force: true do |t|
     t.string   "url"
     t.string   "phash"
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
-    t.boolean  "deleted",        default: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.boolean  "deleted",          default: false
     t.string   "directory_name"
     t.string   "name"
+    t.integer  "hamming_distance"
   end
 
   create_table "users", force: true do |t|

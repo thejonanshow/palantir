@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe Palantir::API, :type => :request do
   include Warden::Test::Helpers
 
+  let(:image_service) { ImageService.new }
   let(:image) { Fabricate.build(:image) }
 
   before(:all) do
@@ -127,6 +128,20 @@ RSpec.describe Palantir::API, :type => :request do
       end
 
       expect { post_request(image) }.to change { event.reload.closed }.from(false).to(true)
+    end
+
+    it "deletes the oldest image" do
+      10.times { store_image(Fabricate(:image)) }
+      expect { post_request(image) }.to change { Image.where(deleted: true).count }.from(0).to(1)
+    end
+
+    it "deletes the oldest image from the remote" do
+      post_request(image)
+      9.times { store_image(Fabricate(:image)) }
+
+      expect(image_service.image_exists?(image)).to be true
+      post_request(Fabricate.build(:image))
+      expect(image_service.image_exists?(image)).to be false
     end
   end
 end

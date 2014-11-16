@@ -4,7 +4,6 @@ class Event < ActiveRecord::Base
   attr_accessor :image_service, :notification_service, :notifications_enabled,
     :disable_callbacks
 
-  after_initialize :set_image_service, :set_notification_service
   after_create :send_notification,
     unless: Proc.new { |event| event.disable_callbacks || event.notifications_disabled? }
   before_save :set_directory_name, :create_directory, :copy_images,
@@ -17,12 +16,12 @@ class Event < ActiveRecord::Base
     disable_callbacks = false
   end
 
-  def set_image_service
-    self.image_service = ImageService.new
+  def image_service
+    @image_service ||= ImageService.new
   end
 
-  def set_notification_service
-    self.notification_service ||= NotificationService.new
+  def notification_service
+    @notification_service ||= NotificationService.new
   end
 
   def notifications_enabled?
@@ -65,6 +64,10 @@ class Event < ActiveRecord::Base
 
   def image_urls
     image_service.image_urls(directory_name)
+  end
+
+  def remote_image_url
+    image_service.remote_image_url_for(self)
   end
 
   def close_event_if_maximum_images

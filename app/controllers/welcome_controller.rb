@@ -3,6 +3,6 @@ class WelcomeController < ApplicationController
 
   def index
     @events = Event.all
-    @images = Image.order(:created_at => :desc).limit(100)
+    @images = Image.where(deleted: false).order(:created_at => :desc).limit(100)
   end
 end
