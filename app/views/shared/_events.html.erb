@@ -1,0 +1,11 @@
+<div id='events' class='col-md-4'>
+  <h2>Events</h2>
+  <% @events.each do |event| %>
+    <div class='well event'>
+    <%= link_to(event_url(event)) do %>
+      <h4><%= "#{l(local_time(event.created_at), format: :month_day_year_time)}" %></h4>
+    <%= image_tag(event.remote_image_url, class: 'thumbnail') %>
+  <% end %>
+  </div>
+<% end %>
+</div>

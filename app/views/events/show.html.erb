@@ -5,7 +5,7 @@
   <h2>Images</h2>
   <% @images.each do |image| %>
     <div class='well event col-xs-2'>
-      <%= link_to image do %>
+      <%= link_to image_url(image) do %>
         <%= image_tag(image, class: 'thumbnail') if image %>
       <% end %>
     </div>
