@@ -49,8 +49,9 @@ RSpec.describe Event, :type => :model do
     end
 
     it "sends a notification" do
-      url = Rails.application.routes.url_helpers.event_url(event)
-      message = "#{Palantir::TWITTER_ALERT}: They draw near: #{url}"
+      allow_any_instance_of(Image).to receive(:copy_to_open_event_directory)
+      Fabricate(:image)
+      message = "#{Palantir::TWITTER_ALERT}: They draw near: #{Image.last.url}"
       expect(event.notification_service).to receive(:notify).with(message)
       event.send_notification
     end
