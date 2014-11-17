@@ -47,7 +47,7 @@ class Event < ActiveRecord::Base
   def send_notification
     return unless notification_service
     url = Rails.application.routes.url_helpers.event_url(self)
-    message = "#{Palantir::TWITTER_ALERT}: They draw near: #{image.url}"
+    message = "#{Palantir::TWITTER_ALERT}: They draw near: #{Image.last.url}"
     notification_service.notify message
   end
 

@@ -32,7 +32,7 @@ module Palantir
       desc "Get the latest image URL"
       get :latest do
         authenticate!
-        image = Image.order(:created_at).last
+        image = Image.last
         image.url if image
       end
     end
