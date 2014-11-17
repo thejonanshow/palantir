@@ -8,7 +8,7 @@ class Image < ActiveRecord::Base
     return unless Image.count > 1
     return unless hamming_distance_exceeds_threshold?
 
-    Event.create(image: self) unless Event.where(closed: false).present?
+    Event.find_or_create(closed: false)
   end
 
   def copy_to_open_event_directory

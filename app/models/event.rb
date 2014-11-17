@@ -4,7 +4,7 @@ class Event < ActiveRecord::Base
   attr_accessor :image_service, :notification_service, :notifications_enabled,
     :disable_callbacks
 
-  after_create :send_notification,
+  after_create :send_notification, :assign_last_image,
     unless: Proc.new { |event| event.disable_callbacks || event.notifications_disabled? }
   before_save :set_directory_name, :create_directory, :copy_images,
     unless: Proc.new { |event| event.disable_callbacks || event.closed }
@@ -14,6 +14,10 @@ class Event < ActiveRecord::Base
     yield(self)
   ensure
     disable_callbacks = false
+  end
+
+  def assign_last_image
+    self.image = Image.last
   end
 
   def image_service
@@ -43,7 +47,7 @@ class Event < ActiveRecord::Base
   def send_notification
     return unless notification_service
     url = Rails.application.routes.url_helpers.event_url(self)
-    message = "#{Palantir::TWITTER_ALERT}: They draw near: #{url}"
+    message = "#{Palantir::TWITTER_ALERT}: They draw near: #{image.url}"
     notification_service.notify message
   end
 
