@@ -48,7 +48,7 @@ class Event < ActiveRecord::Base
     return unless notification_service && Image.last
     url = image_service.remote_image_url_for(self)
 
-    message = "#{Palantir::TWITTER_ALERT}: They draw near: #{url}"
+    message = "#{Palantir::TWITTER_ALERT}: They draw near: #{Image.last.url}"
     notification_service.notify message
   end
 

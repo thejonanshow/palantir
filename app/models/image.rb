@@ -1,7 +1,7 @@
 class Image < ActiveRecord::Base
   attr_accessor :disable_callbacks
 
-  after_create :create_event, :copy_to_open_event_directory, :delete_oldest,
+  after_create :create_event, :copy_to_open_event_directory,
     :unless => Proc.new { |image| image.disable_callbacks }
 
   def create_event
