@@ -3,10 +3,10 @@
 
 <div class='col-md-12'>
   <h2>Images</h2>
-  <% @images.each do |image| %>
+  <% @image_urls.each do |image_url| %>
     <div class='well event col-xs-2'>
-      <%= link_to image_url(image) do %>
-        <%= image_tag(image, class: 'thumbnail') if image %>
+      <%= link_to image_url do %>
+        <%= image_tag(image_url, class: 'thumbnail') %>
       <% end %>
     </div>
   <% end %>
