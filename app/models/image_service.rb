@@ -72,10 +72,12 @@ class ImageService
   def upload_image(image_path, directory_name, key = nil)
     directory = client.directories.get directory_name
     key ||= File.basename(image_path)
-    directory.files.create(
+    uploaded_image = directory.files.create(
       key: key,
       body: File.open(image_path),
       public: true
     )
+    uploaded_image.acl = 'public-read'
+    uploaded_image.save
   end
 end
