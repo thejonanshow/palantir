@@ -4,10 +4,10 @@ class Event < ActiveRecord::Base
   attr_accessor :image_service, :notification_service, :notifications_enabled,
     :disable_callbacks
 
-  after_create :send_notification,
-    unless: Proc.new { |event| event.disable_callbacks || event.notifications_disabled? }
   before_save :set_directory_name, :create_directory, :copy_images, :assign_last_image,
     unless: Proc.new { |event| event.disable_callbacks || event.closed }
+  after_create :send_notification,
+    unless: Proc.new { |event| event.disable_callbacks || event.notifications_disabled? }
 
   def ignore_callbacks
     disable_callbacks = true
